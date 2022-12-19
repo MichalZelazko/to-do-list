@@ -1,23 +1,31 @@
 const incompleteTasks = document.getElementById("incomplete-tasks");
 const completedTasks = document.getElementById("completed-tasks");
 
+const editButton = document.createElement("button");
+editButton.classList.add("edit");
+editButton.innerText = "Edit";
+
 const addButton = document.getElementById("add-button");
 const addInput = document.getElementById("new-task");
 
-const checkboxes = document.querySelectorAll("input[type=checkbox]");
-const checkboxesList = [...checkboxes];
-checkboxesList.forEach((checkbox) => {
-  checkbox.addEventListener("click", () => {
-    checkbox.setAttribute("checked", true);
-    checkbox.parentElement.remove();
-    if (checkbox.parentElement.hasAttribute("class", "editMode")) {
-      checkbox.parentElement.removeAttribute("class", "editMode");
-    }
-    const editButton = checkbox.parentElement.querySelector(".edit");
-    checkbox.parentElement.removeChild(editButton);
-    completedTasks.appendChild(checkbox.parentElement);
-  }); // finish for uncompleting a task
-});
+function getCheckboxes() {
+  const checkboxes = document.querySelectorAll("input[type=checkbox]");
+  const checkboxesList = [...checkboxes];
+  checkboxesList.forEach((checkbox) => {
+    checkbox.addEventListener("click", () => {
+      const list = checkbox.parentNode.parentNode;
+      const listItem = checkbox.parentNode;
+      const isIncompleted = list.id === "completed-tasks";
+      if (isIncompleted) {
+        listItem.appendChild(editButton);
+        incompleteTasks.appendChild(listItem);
+      } else {
+        listItem.querySelector(".edit").remove();
+        completedTasks.appendChild(listItem);
+      }
+    });
+  });
+}
 
 function getButtons() {
   const deleteButtons = document.querySelectorAll(".delete");
@@ -33,15 +41,15 @@ function getButtons() {
   const editButtonsList = [...editButtons];
   editButtonsList.forEach((editButton) => {
     editButton.addEventListener("click", () => {
+      const label = editButton.parentElement.querySelector("label");
+      const input = editButton.parentElement.querySelector("input[type=text]");
       if (editButton.parentElement.hasAttribute("class", "editMode")) {
         editButton.parentElement.removeAttribute("class", "editMode");
-        editButton.previousElementSibling.previousElementSibling.innerText =
-          editButton.previousElementSibling.value;
+        label.innerText = input.value;
       } else {
         editButton.parentElement.setAttribute("class", "editMode");
-        editButton.previousElementSibling.value =
-          editButton.previousElementSibling.previousElementSibling.innerText;
-      } //wziąć children i przefiltrować?
+        input.value = label.innerText;
+      }
     });
   });
 }
@@ -51,6 +59,7 @@ addButton.addEventListener("click", () => {
   if (newTaskName != "" && !newTaskName.match(/^\s+$/g)) {
     createNewTask(newTaskName);
     getButtons();
+    getCheckboxes();
   }
   addInput.value = "";
 });
@@ -83,3 +92,6 @@ const createNewTask = (newTaskName) => {
 
   incompleteTasks.appendChild(newElement);
 };
+
+getButtons();
+getCheckboxes();
