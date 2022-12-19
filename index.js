@@ -1,36 +1,57 @@
 const incompleteTasks = document.getElementById("incomplete-tasks");
-const completeTasks = document.getElementById("complete-tasks");
+const completedTasks = document.getElementById("completed-tasks");
 
 const addButton = document.getElementById("add-button");
 const addInput = document.getElementById("new-task");
 
-const deleteButtons = document.querySelectorAll(".delete");
-const editButtons = document.querySelectorAll(".edit");
-
-const deleteButtonsList = [...deleteButtons];
-deleteButtonsList.forEach((deleteButton) => {
-  deleteButton.addEventListener("click", () => {
-    deleteButton.parentElement.remove();
-  });
+const checkboxes = document.querySelectorAll("input[type=checkbox]");
+const checkboxesList = [...checkboxes];
+checkboxesList.forEach((checkbox) => {
+  checkbox.addEventListener("click", () => {
+    checkbox.setAttribute("checked", true);
+    checkbox.parentElement.remove();
+    if (checkbox.parentElement.hasAttribute("class", "editMode")) {
+      checkbox.parentElement.removeAttribute("class", "editMode");
+    }
+    const editButton = checkbox.parentElement.querySelector(".edit");
+    checkbox.parentElement.removeChild(editButton);
+    completedTasks.appendChild(checkbox.parentElement);
+  }); // finish for uncompleting a task
 });
 
-const editButtonsList = [...editButtons];
-editButtonsList.forEach((editButton) => {
-  editButton.addEventListener("click", () => {
-    if (editButton.parentElement.hasAttribute("class", "editMode")) {
-      editButton.parentElement.removeAttribute("class", "editMode");
-    } else {
-      editButton.parentElement.setAttribute("class", "editMode");
-      editButton.previousElementSibling.value =
-        editButton.previousElementSibling.previousElementSibling.innerText;
-    } //wziąć children i przefiltrować
+function getButtons() {
+  const deleteButtons = document.querySelectorAll(".delete");
+  const editButtons = document.querySelectorAll(".edit");
+
+  const deleteButtonsList = [...deleteButtons];
+  deleteButtonsList.forEach((deleteButton) => {
+    deleteButton.addEventListener("click", () => {
+      deleteButton.parentElement.remove();
+    });
   });
-});
+
+  const editButtonsList = [...editButtons];
+  editButtonsList.forEach((editButton) => {
+    editButton.addEventListener("click", () => {
+      if (editButton.parentElement.hasAttribute("class", "editMode")) {
+        editButton.parentElement.removeAttribute("class", "editMode");
+        editButton.previousElementSibling.previousElementSibling.innerText =
+          editButton.previousElementSibling.value;
+      } else {
+        editButton.parentElement.setAttribute("class", "editMode");
+        editButton.previousElementSibling.value =
+          editButton.previousElementSibling.previousElementSibling.innerText;
+      } //wziąć children i przefiltrować?
+    });
+  });
+}
 
 addButton.addEventListener("click", () => {
   const newTaskName = document.getElementById("new-task").value;
-  if (newTaskName != "" && !newTaskName.match(/\s+/g))
+  if (newTaskName != "" && !newTaskName.match(/^\s+$/g)) {
     createNewTask(newTaskName);
+    getButtons();
+  }
   addInput.value = "";
 });
 
