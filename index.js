@@ -80,10 +80,10 @@ const todoItems = [
 ];
 
 function updateList() {
-  const list = JSON.parse(localStorage.getItem("todoItems"));
-  console.log(list);
   completedTasks.innerHTML = "";
   incompleteTasks.innerHTML = "";
+  const list = JSON.parse(localStorage.getItem("todoItems"));
+  console.log(list);
   list.forEach((element) => {
     createNewTask(element.name, element.isCompleted);
   });
