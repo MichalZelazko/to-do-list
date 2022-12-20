@@ -57,7 +57,7 @@ const createNewTask = (newTaskName, isCompleted) => {
   newElement.appendChild(editButton);
   newElement.appendChild(deleteButton);
 
-  console.log(newElement);
+  //console.log(newElement);
   if (isCompleted) {
     completedTasks.appendChild(newElement);
   } else {
@@ -80,14 +80,13 @@ const todoItems = [
 ];
 
 function updateList() {
+  localStorage.setItem("todoItems", JSON.stringify(todoItems));
   completedTasks.innerHTML = "";
   incompleteTasks.innerHTML = "";
   const list = JSON.parse(localStorage.getItem("todoItems"));
-  console.log(list);
   list.forEach((element) => {
     createNewTask(element.name, element.isCompleted);
   });
-  localStorage.setItem("todoItems", JSON.stringify(todoItems));
 } //zamienić kolejność zeby pierwszego elementu nie tracić
 
 addButton.addEventListener("click", () => {
