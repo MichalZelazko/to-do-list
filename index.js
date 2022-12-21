@@ -79,7 +79,7 @@ const todoItems = [
   },
 ];
 
-function updateList() {
+function updateListOnAdd() {
   localStorage.setItem("todoItems", JSON.stringify(todoItems));
   completedTasks.innerHTML = "";
   incompleteTasks.innerHTML = "";
@@ -87,16 +87,25 @@ function updateList() {
   list.forEach((element) => {
     createNewTask(element.name, element.isCompleted);
   });
-} //zamienić kolejność zeby pierwszego elementu nie tracić
+}
+
+function readListOnLoad() {
+  const list = JSON.parse(localStorage.getItem("todoItems"));
+  completedTasks.innerHTML = "";
+  incompleteTasks.innerHTML = "";
+  list.forEach((element) => {
+    createNewTask(element.name, element.isCompleted);
+  });
+}
 
 addButton.addEventListener("click", () => {
   const newTaskName = document.getElementById("new-task").value;
   if (newTaskName != "" && !newTaskName.match(/^\s+$/g)) {
     const newElement = { name: newTaskName, isCompleted: false };
     todoItems.push(newElement);
-    updateList();
+    updateListOnAdd();
   }
   addInput.value = "";
 });
 
-updateList();
+readListOnLoad();
